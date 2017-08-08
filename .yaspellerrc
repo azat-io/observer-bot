@@ -4,13 +4,15 @@
         "node_modules"
     ],
     "fileExtensions": [
-        ".md",
-        ".js"
+        ".md"
     ],
     "ignoreCapitalization": true,
     "ignoreUrls": true,
     "checkYo": true,
     "dictionary": [
-        "телеграм"
+        "коммуницировать",
+        "телеграм",
+        "форк",
+        "шариться"
     ]
 }
