@@ -12,5 +12,5 @@ coverage
 [._]sw[a-p]
 *~
 
-# Telegram
-etc/token.js
+# Secret
+etc/secret.json

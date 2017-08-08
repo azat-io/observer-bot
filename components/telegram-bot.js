@@ -1,9 +1,9 @@
 'use strict'
 
 import Tgfancy from 'tgfancy'
-import token from '../etc/token.js'
+import { telegramKey } from '../etc/secret.json'
 
-const bot = new Tgfancy(token, {
+const bot = new Tgfancy(telegramKey, {
     polling: true,
 })
 
