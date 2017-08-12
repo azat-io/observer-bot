@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/azat-io/observer-bot.svg?branch=master)](https://travis-ci.org/azat-io/observer-bot)
 [![Coverage Status](https://coveralls.io/repos/github/azat-io/observer-bot/badge.svg?branch=master)](https://coveralls.io/github/azat-io/observer-bot?branch=master)
 [![Dependency Status](https://gemnasium.com/badges/github.com/azat-io/observer-bot.svg)](https://gemnasium.com/github.com/azat-io/observer-bot)
-[![gitHub issues](https://img.shields.io/github/issues/azat-io/observer-bot.svg)](https://github.com/azat-io/observer-bot)
+[![gitHub issues](https://img.shields.io/github/issues-raw/azat-io/observer-bot.svg)](https://github.com/azat-io/observer-bot)
 [![github pull requests](https://img.shields.io/github/issues-pr-raw/azat-io/observer-bot.svg)](https://github.com/azat-io/observer-bot)
 
 <img src="https://user-images.githubusercontent.com/5698350/29092357-bda5b6ce-7c8e-11e7-8a58-4e9525f0654a.png" alt="Бот Наблюдатель" align="right"/>
