@@ -6,6 +6,7 @@ import readMD from './read-markdown'
 // import api from './api'
 
 import signup from './signup'
+import deepLinkHandler from './deep-link'
 
 const fakeTwitterUsername = 'fletcherist'
 
@@ -28,6 +29,8 @@ bot.onText(/^(\/start)$/, msg => {
     bot.sendMessage(msg.chat.id, readMD('start'),
         keyboard([['Зарегистрироваться']], true))
 })
+
+bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
 
 bot.onText(/^(Назад)$/, msg => {
     bot.sendMessage(msg.chat.id, 'Главное меню', keyboard(mainMenu))

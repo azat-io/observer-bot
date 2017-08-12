@@ -25,6 +25,7 @@
     "firebase-admin": "^5.1.0",
     "mau": "^0.2.0",
     "mongoose": "^4.11.6",
+    "nanoid": "^0.2.0",
     "node-geocoder": "^3.19.0",
     "tgfancy": "^0.10.0",
     "twit": "^2.2.9"
