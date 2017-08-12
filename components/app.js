@@ -2,14 +2,18 @@
 
 import bot from './telegram-bot'
 import readMD from './read-markdown'
+import api from './api'
 
-function keyboard (array) {
+import signup from './signup'
+
+function keyboard (array, withOneTimeKeyboardFlag) {
     return {
         parse_mode: 'markdown',
         disable_web_page_preview: true,
         reply_markup: JSON.stringify({
             keyboard: array,
             resize_keyboard: true,
+            one_time_keyboard: withOneTimeKeyboardFlag === true
         })
     }
 }
@@ -18,7 +22,7 @@ const mainMenu = [['Сообщить о нарушении', 'Узнать те�
                 ['Тестировать знания'], ['Сообщить о нарушениях до дня выборов']]
 
 bot.onText(/^(\/start)$/, msg => {
-    bot.sendMessage(msg.chat.id, readMD('start'), keyboard(mainMenu))
+    bot.sendMessage(msg.chat.id, readMD('start'), keyboard([['Зарегистрироваться']], true))
 })
 
 bot.onText(/^(Назад)$/, msg => {
@@ -66,8 +70,12 @@ const damageBulletinOffense = [['Шаблон заявления', 'Отправ
 
 bot.onText(/^(Порча бюллетеней)$/, msg => {
     bot.sendMessage(msg.chat.id, 'Выберите действие', keyboard(damageBulletinOffense))
+
 })
 
+bot.on('message', async msg => {
+    bot.sendMessage(msg.from.id, signup(msg.from.id, msg.text), keyboard(mainMenu))
+})
 
 const regions = [['Россия'], ['Мой регион']]
 

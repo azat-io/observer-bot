@@ -12,5 +12,9 @@ coverage
 [._]sw[a-p]
 *~
 
+# MacOS
+.DS_Store
+
 # Secret
 etc/secret.json
+etc/firebase-keys.json
