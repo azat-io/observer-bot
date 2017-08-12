@@ -85,6 +85,16 @@ bot.on('message', async msg => {
         keyboard(mainMenu))
 })
 
+bot.on('message', async msg => {
+    const { status, message } = signup(msg.from.id, msg.text)
+    const sendMessageArguments = [
+        msg.from.id,
+        message,
+        status ? keyboard(mainMenu) : null,
+    ].filter(Boolean)
+    bot.sendMessage(...sendMessageArguments)
+})
+
 const regions = [['Россия'], ['Мой регион']]
 
 bot.onText(/^(Узнать текущие данные)$/, msg => {
@@ -115,4 +125,5 @@ bot.onText(/^(Порча бюллетеней)$/, msg => {
     twitIt('Кто-то портит блюллетени', fakeTwitterUsername, fakeStationNum)
     bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
         keyboard([['Назад']]))
+    bot.sendMessage(msg.chat.id, 'Путин - 0%, Навальный - 100%', keyboard(mainMenu))
 })
