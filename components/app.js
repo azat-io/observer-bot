@@ -8,7 +8,6 @@ import readMD from './read-markdown'
 import signup from './signup'
 
 const fakeTwitterUsername = 'fletcherist'
-const fakeStationNum = 666
 
 function keyboard (array, withOneTimeKeyboardFlag) {
     return {
@@ -110,19 +109,19 @@ bot.onText(/^(Россия|Мой регион)$/, msg => {
  * Обработка сообщений о нарушениях на выборах
  */
 bot.onText(/^(Карусель)$/, msg => {
-    twitIt('Обнарушена карусель', fakeTwitterUsername, fakeStationNum)
+    twitIt('Обнарушена карусель', fakeTwitterUsername)
     bot.sendMessage(msg.chat.id, 'Текст жалобы на карусель',
         keyboard([['Назад']]))
 })
 
 bot.onText(/^(Вброс)$/, msg => {
-    twitIt('Зафиксирован вброс', fakeTwitterUsername, fakeStationNum)
+    twitIt('Зафиксирован вброс', fakeTwitterUsername)
     bot.sendMessage(msg.chat.id, readMD('violations/vbros'),
         keyboard([['Назад']]))
 })
 
 bot.onText(/^(Порча бюллетеней)$/, msg => {
-    twitIt('Кто-то портит блюллетени', fakeTwitterUsername, fakeStationNum)
+    twitIt('Кто-то портит блюллетени', fakeTwitterUsername)
     bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
         keyboard([['Назад']]))
 })

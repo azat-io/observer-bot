@@ -48,8 +48,7 @@ export default function twitIt (message, user, station) {
      * @link https://github.com/ttezel/twit#tpostpath-params-callback
      */
     return twitter.post('statuses/update', {
-        status: `${ typeof station !== 'undefined' ? 'УИК ' + station + ': '
-            : '' }` + message +
+        status: 'УИК 666: ' + message +
         `${ typeof user !== 'undefined' ? ', сообщает @' + user : '' }` +
         ` #${ formattedCity }ЗаНавального #Навальный2018 #Выборы2018`,
     }).catch(error => {
