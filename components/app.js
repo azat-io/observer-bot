@@ -125,5 +125,4 @@ bot.onText(/^(Порча бюллетеней)$/, msg => {
     twitIt('Кто-то портит блюллетени', fakeTwitterUsername, fakeStationNum)
     bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
         keyboard([['Назад']]))
-    bot.sendMessage(msg.chat.id, 'Путин - 0%, Навальный - 100%', keyboard(mainMenu))
 })
