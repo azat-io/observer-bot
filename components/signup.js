@@ -1,25 +1,24 @@
 import { saveUser } from './api/users'
 
-
 const validateUsername = username => username.match(/^[a-zа-я ]{1,80}$/ig)
 const validateCity = city => city.match(/^[a-zа-я]{1,60}$/ig)
-const validateTwitter = twitter => twitter.match(/^[a-z]{1,60}$/ig)
+const validateTwitter = twitter => twitter.match(/^[a-z0-9]{1,60}$/ig)
 
 const STEPS = {
     1: {
         question: 'Как тебя зовут?',
         dataModel: 'firstName',
-        validateFunction: validateUsername
+        validateFunction: validateUsername,
     },
     2: {
         question: 'Из какого ты города?',
         dataModel: 'city',
-        validateFunction: validateCity
+        validateFunction: validateCity,
     },
     3: {
         question: 'Введи свой юзернейм в Твиттере',
         dataModel: 'twiiter',
-        validateFunction: validateTwitter
+        validateFunction: validateTwitter,
     },
 }
 
