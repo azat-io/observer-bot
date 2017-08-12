@@ -1,4 +1,4 @@
-import bot from './telegram-bot'
+import bot, { keyboard, mainMenu } from './telegram-bot'
 import {
     isValidToken,
     isTokenFreezed,
@@ -34,7 +34,7 @@ export default async message => {
         }
 
         await freezeTokenWithTelegram(recievedToken, telegramId)
-        sendMessage(MESSAGES.successAuthentication)
+        sendMessage(MESSAGES.successAuthentication, keyboard(mainMenu))
     } catch (e) {
         console.log(e)
     }

@@ -1,6 +1,6 @@
 'use strict'
 
-import bot from './telegram-bot'
+import bot, { keyboard, mainMenu } from './telegram-bot'
 import twitIt from './twit-it'
 import readMD from './read-markdown'
 // import api from './api'
@@ -10,24 +10,8 @@ import deepLinkHandler from './deep-link'
 
 const fakeTwitterUsername = 'fletcherist'
 
-function keyboard (array, withOneTimeKeyboardFlag) {
-    return {
-        parse_mode: 'markdown',
-        disable_web_page_preview: true,
-        reply_markup: JSON.stringify({
-            keyboard: array,
-            resize_keyboard: true,
-            one_time_keyboard: withOneTimeKeyboardFlag === true,
-        }),
-    }
-}
-
-const mainMenu = [['Сообщить о нарушении', 'Узнать текущие данные'],
-    ['Тестировать знания'], ['Сообщить о нарушениях до дня выборов']]
-
 bot.onText(/^(\/start)$/, msg => {
-    bot.sendMessage(msg.chat.id, readMD('start'),
-        keyboard([['Зарегистрироваться']], true))
+    bot.sendMessage(msg.chat.id, readMD('start'), keyboard(mainMenu))
 })
 
 bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
