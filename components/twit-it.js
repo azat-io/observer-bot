@@ -27,8 +27,10 @@ const twitter = new Twit({
  * @param { string } user     - Необязательный аргумент, юзернейм пользователя,
  *                              являющегося источником информации, которая будет
  *                              отправлена в Твиттер
+ *
+ * @param { number } station  - Номер избирательного участка
  */
-export default function twitIt (message, user) {
+export default function twitIt (message, user, station) {
     /**
      * Удалить из названия города символы, недопустимые для использования в
      * хештегах Твиттера. Например, слово "Санкт-Петербург" заменить на
@@ -46,7 +48,8 @@ export default function twitIt (message, user) {
      * @link https://github.com/ttezel/twit#tpostpath-params-callback
      */
     return twitter.post('statuses/update', {
-        status: message +
+        status: `${ typeof station !== 'undefined' ? 'УИК ' + station + ': '
+            : '' }` + message +
         `${ typeof user !== 'undefined' ? ', сообщает @' + user : '' }` +
         ` #${ formattedCity }ЗаНавального #Навальный2018 #Выборы2018`,
     }).catch(error => {

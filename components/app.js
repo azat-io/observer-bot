@@ -1,10 +1,14 @@
 'use strict'
 
 import bot from './telegram-bot'
+import twitIt from './twit-it'
 import readMD from './read-markdown'
-import api from './api'
+// import api from './api'
 
 import signup from './signup'
+
+const fakeTwitterUsername = 'fletcherist'
+const fakeStationNum = 666
 
 function keyboard (array, withOneTimeKeyboardFlag) {
     return {
@@ -22,7 +26,8 @@ const mainMenu = [['Сообщить о нарушении', 'Узнать те�
     ['Тестировать знания'], ['Сообщить о нарушениях до дня выборов']]
 
 bot.onText(/^(\/start)$/, msg => {
-    bot.sendMessage(msg.chat.id, readMD('start'), keyboard([['Зарегистрироваться']], true))
+    bot.sendMessage(msg.chat.id, readMD('start'),
+        keyboard([['Зарегистрироваться']], true))
 })
 
 bot.onText(/^(Назад)$/, msg => {
@@ -33,11 +38,13 @@ const reportOffense = [['Карусель', 'Вброс'], ['Порча бюлл
     ['Другое нарушение', 'Назад']]
 
 bot.onText(/^(Сообщить о нарушении)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выбери нарушение из списка', keyboard(reportOffense))
+    bot.sendMessage(msg.chat.id, 'Выбери нарушение из списка',
+        keyboard(reportOffense))
 })
 
 bot.onText(/^(Другое нарушение)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выбери нарушение из списка', keyboard(reportOffense))
+    bot.sendMessage(msg.chat.id, 'Выбери нарушение из списка',
+        keyboard(reportOffense))
 })
 
 const carouselOffense = [['Шаблон заявления', 'Отправить фото/видео'],
@@ -69,7 +76,13 @@ const damageBulletinOffense = [['Шаблон заявления', 'Отправ
     ['Другое нарушение', 'Назад']]
 
 bot.onText(/^(Порча бюллетеней)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите действие', keyboard(damageBulletinOffense))
+    bot.sendMessage(msg.chat.id, 'Выберите действие',
+        keyboard(damageBulletinOffense))
+})
+
+bot.on('message', async msg => {
+    bot.sendMessage(msg.from.id, signup(msg.from.id, msg.text),
+        keyboard(mainMenu))
 })
 
 bot.on('message', async msg => {
@@ -89,5 +102,28 @@ bot.onText(/^(Узнать текущие данные)$/, msg => {
 })
 
 bot.onText(/^(Россия|Мой регион)$/, msg => {
+    bot.sendMessage(msg.chat.id, 'Путин - 0%, Навальный - 100%',
+        keyboard(mainMenu))
+})
+
+/*
+ * Обработка сообщений о нарушениях на выборах
+ */
+bot.onText(/^(Карусель)$/, msg => {
+    twitIt('Обнарушена карусель', fakeTwitterUsername, fakeStationNum)
+    bot.sendMessage(msg.chat.id, 'Текст жалобы на карусель',
+        keyboard([['Назад']]))
+})
+
+bot.onText(/^(Вброс)$/, msg => {
+    twitIt('Зафиксирован вброс', fakeTwitterUsername, fakeStationNum)
+    bot.sendMessage(msg.chat.id, readMD('violations/vbros'),
+        keyboard([['Назад']]))
+})
+
+bot.onText(/^(Порча бюллетеней)$/, msg => {
+    twitIt('Кто-то портит блюллетени', fakeTwitterUsername, fakeStationNum)
+    bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
+        keyboard([['Назад']]))
     bot.sendMessage(msg.chat.id, 'Путин - 0%, Навальный - 100%', keyboard(mainMenu))
 })
