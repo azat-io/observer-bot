@@ -15,9 +15,7 @@ const STEPS = {
     },
 }
 
-const dataStorage = {
-
-}
+const dataStorage = {}
 
 function updateData (telegramId, data) {
     const currentStep = dataStorage[telegramId].step
@@ -44,22 +42,40 @@ function initializeSignup (telegramId) {
     }
 }
 
+function sendMessageToBot(_telegramId) {
+    const telegramId = _telegramId
+    return (message) => {
+        if (!message || !telegramId) {
+            return false
+        }
+
+        const status = dataStorage[telegramId].step > 3
+
+        return {
+            status,
+            message 
+        }
+    }
+}
+
+const getCurrentQuestion = telegramId => STEPS[dataStorage[telegramId].step].question
+
 export default function signup (telegramId, message) {
+    const sendMessage = sendMessageToBot(telegramId)
     if (message.trim() === 'Зарегистрироваться') {
         initializeSignup(telegramId)
-
-        return STEPS[dataStorage[telegramId].step].question
+        return sendMessage(STEPS[dataStorage[telegramId].step].question)
     }
     updateData(telegramId, message.trim())
 
     if (dataStorage[telegramId].step === 4) {
         try {
             saveUser(dataStorage[telegramId].data)
-            return 'Регистрация завершена!'
+            return sendMessage('Регистрация успешно завершена!')
         } catch (e) {
-            return 'Ошибка при регистрации'
+            return sendMessage('Ошибка при регистрации')
         }
     }
 
-    return STEPS[dataStorage[telegramId].step].question
+    return sendMessage(getCurrentQuestion(telegramId))
 }

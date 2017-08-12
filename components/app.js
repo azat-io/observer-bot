@@ -74,7 +74,13 @@ bot.onText(/^(Порча бюллетеней)$/, msg => {
 })
 
 bot.on('message', async msg => {
-    bot.sendMessage(msg.from.id, signup(msg.from.id, msg.text), keyboard(mainMenu))
+    const { status, message } = signup(msg.from.id, msg.text)
+    const sendMessageArguments = [
+        msg.from.id,
+        message,
+        status ? keyboard(mainMenu) : null
+    ].filter(Boolean)
+    bot.sendMessage(...sendMessageArguments)
 })
 
 const regions = [['Россия'], ['Мой регион']]
