@@ -42,7 +42,7 @@ function initializeSignup (telegramId) {
     }
 }
 
-function sendMessageToBot(_telegramId) {
+function sendMessageToBot (_telegramId) {
     const telegramId = _telegramId
     return (message) => {
         if (!message || !telegramId) {
@@ -53,7 +53,7 @@ function sendMessageToBot(_telegramId) {
 
         return {
             status,
-            message 
+            message,
         }
     }
 }
