@@ -17,17 +17,19 @@ const STEPS = {
 
 const dataStorage = {}
 
+const getCurrentStep = telegramId => dataStorage[telegramId].step
+const getCurrentQuestion = telegramId => STEPS[getCurrentStep(telegramId)].question
+
 function updateData (telegramId, data) {
-    const currentStep = dataStorage[telegramId].step
     const newUserData = Object.assign(dataStorage[telegramId].data, {
-        [STEPS[currentStep].dataModel]: data,
+        [STEPS[getCurrentStep(telegramId)].dataModel]: data,
     })
     dataStorage[telegramId] = Object.assign(
         dataStorage[telegramId], {
             data: newUserData,
         }
     )
-    dataStorage[telegramId].step = dataStorage[telegramId].step + 1
+    dataStorage[telegramId].step = getCurrentStep(telegramId) + 1
 
     console.log(dataStorage)
     return dataStorage.telegramId
@@ -49,7 +51,7 @@ function sendMessageToBot (_telegramId) {
             return false
         }
 
-        const status = dataStorage[telegramId].step > 3
+        const status = getCurrentStep(telegramId) > 3
 
         return {
             status,
@@ -58,7 +60,12 @@ function sendMessageToBot (_telegramId) {
     }
 }
 
-const getCurrentQuestion = telegramId => STEPS[dataStorage[telegramId].step].question
+// const validateData = _telegramId => {
+//     const telegramId = _telegramId
+//     return (data) => {
+
+//     }
+// }
 
 export default function signup (telegramId, message) {
     const sendMessage = sendMessageToBot(telegramId)
@@ -68,7 +75,7 @@ export default function signup (telegramId, message) {
     }
     updateData(telegramId, message.trim())
 
-    if (dataStorage[telegramId].step === 4) {
+    if (getCurrentStep(telegramId) === 4) {
         try {
             saveUser(dataStorage[telegramId].data)
             return sendMessage('Регистрация успешно завершена!')
