@@ -59,9 +59,10 @@ function sendInlineMessage (data, chatId, dataFromMessage) {
             resize_keyboard: true,
         }),
     })
+
     if (messageData[messageIndex] &&
         messageData[messageIndex].twit_it === true) {
-        twitIt(messageData[messageIndex].messageData, fakeTwitterUsername)
+        twitIt(messageData[messageIndex].messageText, 'fake')
     }
 }
 
