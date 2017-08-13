@@ -28,6 +28,7 @@
     "nanoid": "^0.2.0",
     "node-geocoder": "^3.19.0",
     "request": "^2.81.0",
+    "request-promise": "^4.2.1",
     "tgfancy": "^0.10.0",
     "twit": "^2.2.9"
   },

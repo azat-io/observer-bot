@@ -31,16 +31,20 @@ export default () => ([
         ],
     }, {
         messageData: 'throwIn',
-        messageText: 'Зафиксирован вброс',
+        messageText: 'Вы зафиксировали вброс. Подтвердить действие?',
         twit_it: true,
+        tweetMessage: 'Зафиксирован вброс',
         inlineKeyboard: [
             [{
-                text: 'Отправить фото-доказательства',
-                callback_data: 'throwInPhoto',
-            }, {
-                text: 'Подкуп избирателей',
+                text: 'Прикрепить фото-доказательство',
+                callback_data: 'attachPhoto',
+            }], [{
+                text: 'Потвердить',
                 callback_data: 'bribe',
-            }],
+            }, {
+                text: 'Отменить',
+                callback_data: 'mainMenu',
+            }]
         ],
     }, {
         messageData: 'carousel',
@@ -49,11 +53,23 @@ export default () => ([
         inlineKeyboard: [
             [{
                 text: 'Отправить фото-доказательства',
-                callback_data: 'throwInPhoto',
+                callback_data: 'attachPhoto',
             }, {
                 text: 'Подкуп избирателей',
                 callback_data: 'bribe',
             }],
         ],
+    }, {
+        messageData: 'attachPhoto',
+        messageText: 'Пожалуйста, прикрепите фотографию нарушения',
+        inlineKeyboard: [
+            [{
+                text: 'Отправить',
+                callback_data: 'sendPhoto'
+            }, {
+                text: 'Отменить',
+                callback_data: 'mainMenu'
+            }],
+        ]
     }
 ])

@@ -1,7 +1,7 @@
 'use strict'
 
 import bot, { keyboard } from './telegram-bot'
-import request from 'request'
+import request from 'request-promise'
 import twitIt from './twit-it'
 import readMD from './read-markdown'
 import deepLinkHandler from './deep-link'
@@ -62,7 +62,7 @@ function sendInlineMessage (data, chatId, dataFromMessage) {
 
     if (messageData[messageIndex] &&
         messageData[messageIndex].twit_it === true) {
-        twitIt(messageData[messageIndex].messageText, 'fake')
+        twitIt(messageData[messageIndex].tweetMessage, 'fake')
     }
 }
 
@@ -94,14 +94,17 @@ function twitOffense (type) {
     }
 }
 
+const getFullsizePhoto = msg => msg.photo[msg.photo.length - 1].file_id
 bot.on('photo', async msg => {
-    bot.getFileLink(msg.photo[0].file_id).then(response => {
-        request({
+    try {
+        const fileLink = await bot.getFileLink(getFullsizePhoto(msg))
+        const body = await request({
             method: 'GET',
-            uri: response,
+            uri: fileLink,
             encoding: 'base64',
-        }, (error, response, body) => {
-            twitIt('Неизвестное нарушение', fakeTwitterUsername, 168, body)
         })
-    })
+        twitIt('Неизвестное нарушение', fakeTwitterUsername, 168, body)
+    } catch (e) {
+        console.log(e)
+    }
 })

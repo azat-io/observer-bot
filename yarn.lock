@@ -3288,7 +3288,7 @@ request-promise-core@1.1.1:
   dependencies:
     lodash "^4.13.1"
 
-request-promise@^4.1.1:
+request-promise@^4.1.1, request-promise@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/request-promise/-/request-promise-4.2.1.tgz#7eec56c89317a822cbfea99b039ce543c2e15f67"
   dependencies:
