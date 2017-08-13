@@ -7,23 +7,13 @@ import readMD from './read-markdown'
 import deepLinkHandler from './deep-link'
 import getCurrentDataHandler from './get-current-data'
 
+import getRoutes from './routes'
+
 const fakeTwitterUsername = 'fletcherist'
 
-const mainMenuButtons = [
-    [{
-        text: 'Сообщить о нарушении в день голосования',
-        callback_data: 'reportOffense',
-    }], [{
-        text: 'Сообщить о нарушении до дня голосования',
-        callback_data: 'reportPressure',
-    }], [{
-        text: 'Начать тестирование знаний',
-        callback_data: 'knowledgeTest',
-    }], [{
-        text: 'Узнать результаты в регионе',
-        callback_data: 'sendResults',
-    }],
-]
+const mainMenuButtons = getRoutes()
+
+import getReportsRoutes from './routes/reports'
 
 const anotherRegion = [[{
     text: 'Другой регион',
@@ -49,63 +39,10 @@ const options = [
         messageData: 'mainMenu',
         messageText: 'Выберите действие',
         inlineKeyboard: mainMenuButtons,
-    }, {
-        messageData: 'reportOffense',
-        messageText: 'Какое нарушение?',
-        inlineKeyboard: [
-            [{
-                text: 'Вброс',
-                callback_data: 'throwIn',
-            }, {
-                text: 'Карусель',
-                callback_data: 'carousel',
-            }], [{
-                text: 'Главное меню',
-                callback_data: 'mainMenu',
-            }],
-        ],
-    }, {
-        messageData: 'reportPressure',
-        messageText: 'Какое нарушение происходит до дня выборов?',
-        inlineKeyboard: [
-            [{
-                text: 'Административное давление',
-                callback_data: 'pressure',
-            }], [{
-                text: 'Подкуп избирателей',
-                callback_data: 'bribe',
-            }], [{
-                text: 'Главное меню',
-                callback_data: 'mainMenu',
-            }],
-        ],
-    }, {
-        messageData: 'throwIn',
-        messageText: 'Зафиксирован вброс',
-        twit_it: true,
-        inlineKeyboard: [
-            [{
-                text: 'Отправить фото-доказательства',
-                callback_data: 'throwInPhoto',
-            }, {
-                text: 'Подкуп избирателей',
-                callback_data: 'bribe',
-            }],
-        ],
-    }, {
-        messageData: 'carousel',
-        messageText: 'Зафиксирована карусель',
-        twit_it: true,
-        inlineKeyboard: [
-            [{
-                text: 'Отправить фото-доказательства',
-                callback_data: 'throwInPhoto',
-            }, {
-                text: 'Подкуп избирателей',
-                callback_data: 'bribe',
-            }],
-        ],
-    }, {
+    }, 
+
+    ...getReportsRoutes(),
+    , {
         messageData: 'knowledgeTest',
         messageText: 'Проверим ваши знания! Вы знаете как проводятся выборы?',
         inlineKeyboard: [
@@ -184,7 +121,7 @@ function sendInlineMessage (data, chatId, dataFromMessage) {
     let messageIndex
 
     for (let i = 0, max = messageData.length; i < max; i++) {
-        if (messageData[i].messageData === data) {
+        if (messageData[i] && messageData[i].messageData === data) {
             messageIndex = i
         }
     }
