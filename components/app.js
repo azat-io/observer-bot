@@ -7,6 +7,7 @@ import readMD from './read-markdown'
 
 import signup from './signup'
 import deepLinkHandler from './deep-link'
+import getCurrentDataHandler from './get-current-data'
 
 const fakeTwitterUsername = 'fletcherist'
 
@@ -79,6 +80,7 @@ bot.onText(/^(\/start)$/, msg => {
 })
 
 bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
+bot.onText(/^(Узнать текущие данные)$/, getCurrentDataHandler)
 
 bot.onText(/^(Назад)$/, msg => {
     bot.sendMessage(msg.chat.id, 'Главное меню', keyboard(mainMenu))
@@ -138,17 +140,6 @@ bot.on('message', async msg => {
         status ? keyboard(mainMenu) : null,
     ].filter(Boolean)
     bot.sendMessage(...sendMessageArguments)
-})
-
-const regions = [['Россия'], ['Мой регион']]
-
-bot.onText(/^(Узнать текущие данные)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите регион', keyboard(regions))
-})
-
-bot.onText(/^(Россия|Мой регион)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Путин - 0%, Навальный - 100%',
-        keyboard(mainMenu))
 })
 
 /*
