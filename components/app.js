@@ -10,42 +10,178 @@ import deepLinkHandler from './deep-link'
 
 const fakeTwitterUsername = 'fletcherist'
 
-bot.onText(/^\/inline$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Тест', {
+const mainMenuButtons = [
+                [{
+                    text: 'Сообщить о нарушении в день голосования',
+                    callback_data: 'reportOffense',
+                }], [{
+                    text: 'Сообщить о нарушении до дня голосования',
+                    callback_data: 'reportPressure',
+                }], [{
+                    text: 'Начать тестирование знаний',
+                    callback_data: 'knowledgeTest',
+                }], [{
+                    text: 'Узнать результаты в регионе',
+                    callback_data: 'sendResults',
+                }],
+            ]
+
+const anotherRegion = [[{
+                text: 'Другой регион',
+                callback_data: 'sendResults',
+            },{
+                text: 'Главное меню',
+                callback_data: 'mainMenu',
+            }],]
+
+bot.onText(/^\/start$/, msg => {
+    bot.sendMessage(msg.chat.id, 'Выберите действие', {
         parse_mode: 'markdown',
         disable_web_page_preview: true,
         reply_markup: JSON.stringify({
-            inline_keyboard: [
-                [{
-                    text: 'Вариант 1',
-                    callback_data: 'var1',
-                }, {
-                    text: 'Вариант 2',
-                    callback_data: 'var2',
-                }],
-            ],
+            inline_keyboard: mainMenuButtons,
             resize_keyboard: true,
         }),
     })
 })
 
-function sendInlineMessage (data, chatId) {
-    const messageData = [{
-        messageData: 'var1',
-        messageText: 'Был выбрал вариант 1',
+const options = [
+    {
+        messageData: 'mainMenu',
+        messageText: 'Выберите действие',
+        inlineKeyboard: mainMenuButtons,
+    }, {
+        messageData: 'reportOffense',
+        messageText: 'Какое нарушение?',
         inlineKeyboard: [
             [{
-                text: 'Выбрать вариант 1.1',
-                callback_data: 'var11',
+                text: 'Вброс',
+                callback_data: 'throwIn',
+            }, {
+                text: 'Карусель',
+                callback_data: 'carousel',
             }], [{
-                text: 'Выбрать вариант 1.2',
-                callback_data: 'var12',
+                text: 'Главное меню',
+                callback_data: 'mainMenu',
             }],
         ],
     }, {
-        messageData: 'var2',
-        messageText: 'Был выбран вариант 2',
+        messageData: 'reportPressure',
+        messageText: 'Какое нарушение происходит до дня выборов?',
+        inlineKeyboard: [
+            [{
+                text: 'Административное давление',
+                callback_data: 'pressure',
+            }], [{
+                text: 'Подкуп избирателей',
+                callback_data: 'bribe',
+            }], [{
+                text: 'Главное меню',
+                callback_data: 'mainMenu',
+            }],
+        ],
+    }, {
+        messageData: 'throwIn',
+        messageText: 'Зафиксирован вброс',
+        twit_it:true,
+        inlineKeyboard: [
+            [{
+                text: 'Отправить фото-доказательства',
+                callback_data: 'throwInPhoto',
+            }, {
+                text: 'Подкуп избирателей',
+                callback_data: 'bribe',
+            }],
+        ],
+    }, {
+        messageData: 'carousel',
+        messageText: 'Зафиксирована карусель',
+        twit_it:true,
+        inlineKeyboard: [
+            [{
+                text: 'Отправить фото-доказательства',
+                callback_data: 'throwInPhoto',
+            }, {
+                text: 'Подкуп избирателей',
+                callback_data: 'bribe',
+            }],
+        ],
+    }, {
+        messageData: 'knowledgeTest',
+        messageText: 'Проверим ваши знания! Вы знаете как проводятся выборы?',
+        inlineKeyboard: [
+            [{
+                text: 'Да, я знаю все о выборах!',
+                callback_data: 'hasKnowledge',
+            }, {
+                text: 'Нет, я не в курсе.',
+                callback_data: 'noKnowledge',
+            }],
+        ],
+    }, {
+        messageData: 'hasKnowledge',
+        messageText: 'Молодец! Теперь можно быть наблюдателем на выборах!',
+        inlineKeyboard: [
+            [{
+                text: 'Главное меню',
+                callback_data: 'mainMenu',
+            }],
+        ],
+    }, {
+        messageData: 'noKnowledge',
+        messageText: 'Пройди курс подготовки!',
+        inlineKeyboard: [
+            [{
+                text: 'Главное меню',
+                callback_data: 'mainMenu',
+            }],
+        ],
+    }, {
+        messageData: 'sendResults',
+        messageText: 'Выберите регион',
+        inlineKeyboard: [
+            [{
+                text: 'Москва',
+                callback_data: 'msk',
+            }, {
+                text: 'Санкт-Петербург',
+                callback_data: 'spb',
+            }], [{
+                text: 'Татарстан',
+                callback_data: 'kzn',
+            }, {
+                text: 'Новосибирская область',
+                callback_data: 'nsb',
+            }], [{
+                text: 'Вся Россия',
+                callback_data: 'russia',
+            }],
+        ],
+    }, {
+        messageData: 'russia',
+        messageText: 'Данные по России: Навальный - 33,4%, Путин - 30,4%, Зюганов - 24,3%, Жириновский - 11,8%.',
+        inlineKeyboard: anotherRegion,
+    }, {
+        messageData: 'msk',
+        messageText: 'Данные по Москве: Навальный - 34,1%, Путин - 24,2%, Зюганов - 25,1%, Жириновский - 15,9%.',
+        inlineKeyboard: anotherRegion,
+    }, {
+        messageData: 'spb',
+        messageText: 'Данные по Санкт-Петербургу: Навальный - 29,8%, Путин - 29,0%, Зюганов - 24,3%, Жириновский - 16,8%.',
+        inlineKeyboard: anotherRegion,
+    }, {
+        messageData: 'kzn',
+        messageText: 'Данные по Татарстану: Навальный - 38,4%, Путин - 33,4%, Зюганов - 19,3%, Жириновский - 8,8%.',
+        inlineKeyboard: anotherRegion,
+    }, {
+        messageData: 'nsb',
+        messageText: 'Данные по Новосибирской Области: Навальный - 35,8%, Путин - 28,0%, Зюганов - 22,3%, Жириновский - 13,8%.',
+        inlineKeyboard: anotherRegion,
     }]
+
+
+function sendInlineMessage (data, chatId, dataFromMessage) {
+    const messageData = options
 
     let messageIndex
 
@@ -54,15 +190,27 @@ function sendInlineMessage (data, chatId) {
             messageIndex = i
         }
     }
-
-    bot.sendMessage(chatId, messageData[messageIndex].messageText, {
-        parse_mode: 'markdown',
-        disable_web_page_preview: true,
-        reply_markup: JSON.stringify({
-            inline_keyboard: messageData[messageIndex].inlineKeyboard,
-            resize_keyboard: true,
-        }),
-    })
+    
+    if(messageData[messageIndex].twit_it === true) {
+        twitIt(messageData[messageIndex].messageData)
+        bot.sendMessage(chatId, messageData[messageIndex].messageText, {
+            parse_mode: 'markdown',
+            disable_web_page_preview: true,
+            reply_markup: JSON.stringify({
+                inline_keyboard: messageData[messageIndex].inlineKeyboard,
+                resize_keyboard: true,
+            }),
+        })
+    } else {
+        bot.sendMessage(chatId, messageData[messageIndex].messageText, {
+            parse_mode: 'markdown',
+            disable_web_page_preview: true,
+            reply_markup: JSON.stringify({
+                inline_keyboard: messageData[messageIndex].inlineKeyboard,
+                resize_keyboard: true,
+            }),
+        })
+    }
 }
 
 bot.on('callback_query', callbackQuery => {
@@ -74,100 +222,22 @@ bot.on('callback_query', callbackQuery => {
         })
 })
 
-bot.onText(/^(\/start)$/, msg => {
-    bot.sendMessage(msg.chat.id, readMD('start'), keyboard(mainMenu))
-})
-
 bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
 
-bot.onText(/^(Назад)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Главное меню', keyboard(mainMenu))
-})
 
-const reportOffense = [['Карусель', 'Вброс'], ['Порча бюллетеней'],
-    ['Другое нарушение', 'Назад']]
-
-bot.onText(/^(Сообщить о нарушении)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выбери нарушение из списка',
-        keyboard(reportOffense))
-})
-
-bot.onText(/^(Другое нарушение)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выбери нарушение из списка',
-        keyboard(reportOffense))
-})
-
-const carouselOffense = [['Шаблон заявления', 'Отправить фото/видео'],
-    ['Получить фото/видео ближайших УИКов'], ['Другое нарушение', 'Назад']]
-
-bot.onText(/^(Карусель)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите действие', keyboard(carouselOffense))
-})
-
-const throwInOffense = [['Шаблон заявления', 'Отправить фото/видео'],
-    ['За какого кандидата?'], ['Другое нарушение', 'Назад']]
-
-bot.onText(/^(Вброс)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите действие', keyboard(throwInOffense))
-})
-
-const candidates = [['Навальный', 'Путин'],
-    ['Зюганов', 'Жириновский']]
-
-bot.onText(/^(За какого кандидата\?)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите кандидата', keyboard(candidates))
-})
-
-bot.onText(/^(Навальный|Путин|Зюганов|Жириновский)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите действие', keyboard(throwInOffense))
-})
-
-const damageBulletinOffense = [['Шаблон заявления', 'Отправить фото/видео'],
-    ['Другое нарушение', 'Назад']]
-
-bot.onText(/^(Порча бюллетеней)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите действие',
-        keyboard(damageBulletinOffense))
-})
-
-bot.on('message', async msg => {
-    const { status, message } = signup(msg.from.id, msg.text)
-    const sendMessageArguments = [
-        msg.from.id,
-        message,
-        status ? keyboard(mainMenu) : null,
-    ].filter(Boolean)
-    bot.sendMessage(...sendMessageArguments)
-})
-
-const regions = [['Россия'], ['Мой регион']]
-
-bot.onText(/^(Узнать текущие данные)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Выберите регион', keyboard(regions))
-})
-
-bot.onText(/^(Россия|Мой регион)$/, msg => {
-    bot.sendMessage(msg.chat.id, 'Путин - 0%, Навальный - 100%',
-        keyboard(mainMenu))
-})
-
-/*
- * Обработка сообщений о нарушениях на выборах
- */
-bot.onText(/^(Карусель)$/, msg => {
-    twitIt('Обнарушена карусель', fakeTwitterUsername)
-    bot.sendMessage(msg.chat.id, 'Текст жалобы на карусель',
+function twitOffense (type) {
+    if(type === 'throwIn') {
+        twitIt('Зафиксирован вброс', fakeTwitterUsername)
+        bot.sendMessage(msg.chat.id, readMD('violations/vbros'),
         keyboard([['Назад']]))
-})
-
-bot.onText(/^(Вброс)$/, msg => {
-    twitIt('Зафиксирован вброс', fakeTwitterUsername)
-    bot.sendMessage(msg.chat.id, readMD('violations/vbros'),
+    } else if(type === 'carousel') {
+        twitIt('Обнаружена карусель', fakeTwitterUsername)
+        bot.sendMessage(msg.chat.id, 'Текст жалобы на карусель',
         keyboard([['Назад']]))
-})
-
-bot.onText(/^(Порча бюллетеней)$/, msg => {
-    twitIt('Кто-то портит блюллетени', fakeTwitterUsername)
-    bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
+    } else if(type === 'damage') {
+        twitIt('Кто-то портит блюллетени', fakeTwitterUsername)
+        bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
         keyboard([['Назад']]))
-})
+    }
+}
+
