@@ -14,14 +14,8 @@ const fakeTwitterUsername = 'fletcherist'
 const mainMenuButtons = getRoutes()
 
 import getReportsRoutes from './routes/reports'
-
-const anotherRegion = [[{
-    text: 'Другой регион',
-    callback_data: 'sendResults',
-}, {
-    text: 'Главное меню',
-    callback_data: 'mainMenu',
-}]]
+import getKnowledgeTestRoutes from './routes/knowledge-test'
+import getCurrentDataRoutes from './routes/get-current-data'
 
 bot.onText(/^\/start$/, msg => {
     bot.sendMessage(msg.chat.id, 'Выберите действие', {
@@ -42,78 +36,9 @@ const options = [
     }, 
 
     ...getReportsRoutes(),
-    , {
-        messageData: 'knowledgeTest',
-        messageText: 'Проверим ваши знания! Вы знаете как проводятся выборы?',
-        inlineKeyboard: [
-            [{
-                text: 'Да, я знаю все о выборах!',
-                callback_data: 'hasKnowledge',
-            }, {
-                text: 'Нет, я не в курсе.',
-                callback_data: 'noKnowledge',
-            }],
-        ],
-    }, {
-        messageData: 'hasKnowledge',
-        messageText: 'Молодец! Теперь можно быть наблюдателем на выборах!',
-        inlineKeyboard: [
-            [{
-                text: 'Главное меню',
-                callback_data: 'mainMenu',
-            }],
-        ],
-    }, {
-        messageData: 'noKnowledge',
-        messageText: 'Пройди курс подготовки!',
-        inlineKeyboard: [
-            [{
-                text: 'Главное меню',
-                callback_data: 'mainMenu',
-            }],
-        ],
-    }, {
-        messageData: 'sendResults',
-        messageText: 'Выберите регион',
-        inlineKeyboard: [
-            [{
-                text: 'Москва',
-                callback_data: 'msk',
-            }, {
-                text: 'Санкт-Петербург',
-                callback_data: 'spb',
-            }], [{
-                text: 'Татарстан',
-                callback_data: 'kzn',
-            }, {
-                text: 'Новосибирская область',
-                callback_data: 'nsb',
-            }], [{
-                text: 'Вся Россия',
-                callback_data: 'russia',
-            }],
-        ],
-    }, {
-        messageData: 'russia',
-        messageText: 'Данные по России: Навальный - 33,4%, Путин - 30,4%, Зюганов - 24,3%, Жириновский - 11,8%.',
-        inlineKeyboard: anotherRegion,
-    }, {
-        messageData: 'msk',
-        messageText: 'Данные по Москве: Навальный - 34,1%, Путин - 24,2%, Зюганов - 25,1%, Жириновский - 15,9%.',
-        inlineKeyboard: anotherRegion,
-    }, {
-        messageData: 'spb',
-        messageText: 'Данные по Санкт-Петербургу: Навальный - 29,8%, Путин - 29,0%, Зюганов - 24,3%, Жириновский - 16,8%.',
-        inlineKeyboard: anotherRegion,
-    }, {
-        messageData: 'kzn',
-        messageText: 'Данные по Татарстану: Навальный - 38,4%, Путин - 33,4%, Зюганов - 19,3%, Жириновский - 8,8%.',
-        inlineKeyboard: anotherRegion,
-    }, {
-        messageData: 'nsb',
-        messageText: 'Данные по Новосибирской Области: Навальный - 35,8%, Путин - 28,0%, Зюганов - 22,3%, Жириновский - 13,8%.',
-        inlineKeyboard: anotherRegion,
-    }]
+    ...getKnowledgeTestRoutes(), 
+    ...getCurrentDataRoutes()
+]
 
 function sendInlineMessage (data, chatId, dataFromMessage) {
     const messageData = options
