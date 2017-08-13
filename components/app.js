@@ -10,6 +10,70 @@ import deepLinkHandler from './deep-link'
 
 const fakeTwitterUsername = 'fletcherist'
 
+bot.onText(/^\/inline$/, msg => {
+    bot.sendMessage(msg.chat.id, 'Тест', {
+        parse_mode: 'markdown',
+        disable_web_page_preview: true,
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{
+                    text: 'Вариант 1',
+                    callback_data: 'var1',
+                }, {
+                    text: 'Вариант 2',
+                    callback_data: 'var2',
+                }],
+            ],
+            resize_keyboard: true,
+        }),
+    })
+})
+
+function sendInlineMessage (data, chatId) {
+    const messageData = [{
+        messageData: 'var1',
+        messageText: 'Был выбрал вариант 1',
+        inlineKeyboard: [
+            [{
+                text: 'Выбрать вариант 1.1',
+                callback_data: 'var11',
+            }], [{
+                text: 'Выбрать вариант 1.2',
+                callback_data: 'var12',
+            }],
+        ],
+    }, {
+        messageData: 'var2',
+        messageText: 'Был выбран вариант 2',
+    }]
+
+    let messageIndex
+
+    for (let i = 0, max = messageData.length; i < max; i++) {
+        if (messageData[i].messageData === data) {
+            messageIndex = i
+        }
+    }
+
+    bot.sendMessage(chatId, messageData[messageIndex].messageText, {
+        parse_mode: 'markdown',
+        disable_web_page_preview: true,
+        reply_markup: JSON.stringify({
+            inline_keyboard: messageData[messageIndex].inlineKeyboard,
+            resize_keyboard: true,
+        }),
+    })
+}
+
+bot.on('callback_query', callbackQuery => {
+    const msg = callbackQuery.message
+    const data = callbackQuery.data
+    bot.answerCallbackQuery(callbackQuery.id)
+        .then(() => {
+            sendInlineMessage(data, msg.chat.id)
+        })
+})
+
 bot.onText(/^(\/start)$/, msg => {
     bot.sendMessage(msg.chat.id, readMD('start'), keyboard(mainMenu))
 })
