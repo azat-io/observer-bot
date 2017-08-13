@@ -1,12 +1,27 @@
 import generate from 'nanoid/generate'
 import { db } from '../db'
 
+const TELEGRAM_BOT_NAME = 'KazanObserverBot'
+const TELEGRAM_BOT_URL = `https://t.me/${TELEGRAM_BOT_NAME}`
+
 // eslint-disable-next-line
 async function generateRandomTokens () {
     for (let i = 0; i < 20; i++) {
-        const randomToken = generate('1234567890abcdef', 10)
+        const randomToken = generate('1234567890abcdef', 20)
         await db.ref(`/tokens/${ randomToken }`).transaction(val => 0)
     }
+}
+
+const generateAuthenticationLink = token => `${TELEGRAM_BOT_URL}?start=${token}`
+
+async function generateAuthorizationLinks (count = 10) {
+    const authTokens = (await db.ref(`/tokens`).once('value')).val()
+    const availableTokens = Object.keys(authTokens).filter(
+        (token, index) => authTokens[token] === 0
+    )
+
+    const authenticationLinks = availableTokens.map(generateAuthenticationLink)
+    return authenticationLinks
 }
 
 export const freezeTokenWithTelegram = async (token, telegramId) => {

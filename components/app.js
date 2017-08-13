@@ -1,12 +1,14 @@
 'use strict'
 
 import bot, { keyboard, mainMenu } from './telegram-bot'
+import request from 'request'
 import twitIt from './twit-it'
 import readMD from './read-markdown'
 // import api from './api'
 
 import signup from './signup'
 import deepLinkHandler from './deep-link'
+import getCurrentDataHandler from './get-current-data'
 
 const fakeTwitterUsername = 'fletcherist'
 
@@ -223,12 +225,13 @@ bot.on('callback_query', callbackQuery => {
 })
 
 bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
-
+bot.onText(/^(Узнать текущие данные)$/, getCurrentDataHandler)
 
 function twitOffense (type) {
     if(type === 'throwIn') {
         twitIt('Зафиксирован вброс', fakeTwitterUsername)
         bot.sendMessage(msg.chat.id, readMD('violations/vbros'),
+
         keyboard([['Назад']]))
     } else if(type === 'carousel') {
         twitIt('Обнаружена карусель', fakeTwitterUsername)
@@ -241,3 +244,14 @@ function twitOffense (type) {
     }
 }
 
+bot.on('photo', async msg => {
+    bot.getFileLink(msg.photo[0].file_id).then(response => {
+        request({
+            method: 'GET',
+            uri: response,
+            encoding: 'base64',
+        }, (error, response, body) => {
+            twitIt('Неизвестное нарушение', fakeTwitterUsername, 168, body)
+        })
+    })
+})
