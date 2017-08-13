@@ -79,31 +79,29 @@ bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
 bot.onText(/^(Узнать текущие данные)$/, getCurrentDataHandler)
 
 function twitOffense (type) {
+    const sendMessage = bot.sendMessage.bind(null, msg.chat.id)
+    const keyboardPreviousStep = keyboard([['Назад']])
     if (type === 'throwIn') {
         twitIt('Зафиксирован вброс', fakeTwitterUsername)
-        bot.sendMessage(msg.chat.id, readMD('violations/vbros'),
-            keyboard([['Назад']]))
+        sendMessage(readMD('violations/vbros'), keyboardPreviousStep)
     } else if (type === 'carousel') {
         twitIt('Обнаружена карусель', fakeTwitterUsername)
-        bot.sendMessage(msg.chat.id, 'Текст жалобы на карусель',
-            keyboard([['Назад']]))
+        sendMessage('Текст жалобы на карусель', keyboardPreviousStep)
     } else if (type === 'damage') {
         twitIt('Кто-то портит блюллетени', fakeTwitterUsername)
-        bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
-            keyboard([['Назад']]))
+        sendMessage('Текст жалобы на порчу бюллетеней', keyboardPreviousStep)
     }
 }
 
 const getFullsizePhoto = msg => msg.photo[msg.photo.length - 1].file_id
 bot.on('photo', async msg => {
     try {
-        const fileLink = await bot.getFileLink(getFullsizePhoto(msg))
         const body = await request({
             method: 'GET',
-            uri: fileLink,
+            uri: await bot.getFileLink(getFullsizePhoto(msg)),
             encoding: 'base64',
         })
-        twitIt('Неизвестное нарушение', fakeTwitterUsername, 168, body)
+        twitIt('Зафиксирована карусель', fakeTwitterUsername, 168, body)
     } catch (e) {
         console.log(e)
     }
