@@ -193,25 +193,17 @@ function sendInlineMessage (data, chatId, dataFromMessage) {
         }
     }
     
-    if(messageData[messageIndex].twit_it === true) {
-        twitIt(messageData[messageIndex].messageData)
-        bot.sendMessage(chatId, messageData[messageIndex].messageText, {
-            parse_mode: 'markdown',
-            disable_web_page_preview: true,
-            reply_markup: JSON.stringify({
-                inline_keyboard: messageData[messageIndex].inlineKeyboard,
-                resize_keyboard: true,
-            }),
-        })
-    } else {
-        bot.sendMessage(chatId, messageData[messageIndex].messageText, {
-            parse_mode: 'markdown',
-            disable_web_page_preview: true,
-            reply_markup: JSON.stringify({
-                inline_keyboard: messageData[messageIndex].inlineKeyboard,
-                resize_keyboard: true,
-            }),
-        })
+    bot.sendMessage(chatId, messageData[messageIndex].messageText, {
+        parse_mode: 'markdown',
+        disable_web_page_preview: true,
+        reply_markup: JSON.stringify({
+            inline_keyboard: messageData[messageIndex].inlineKeyboard,
+            resize_keyboard: true,
+        }),
+    })
+    if(messageData[messageIndex] &&
+        messageData[messageIndex].twit_it === true) {
+        twitIt(messageData[messageIndex].messageData, fakeTwitterUsername)
     }
 }
 

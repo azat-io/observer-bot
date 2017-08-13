@@ -23,6 +23,7 @@ async function generateAuthorizationLinks (count = 10) {
     const authenticationLinks = availableTokens.map(generateAuthenticationLink)
     return authenticationLinks
 }
+generateAuthorizationLinks().then(console.log)
 
 export const freezeTokenWithTelegram = async (token, telegramId) => {
     console.log(token, telegramId)
@@ -40,4 +41,4 @@ export const isTokenFreezed = async token => {
 }
 
 export const isYourToken = async (token, telegramId) =>
-    (await getToken(token)).toString() === telegramId.toString()
+    (await getToken(token)) === telegramId.toString()

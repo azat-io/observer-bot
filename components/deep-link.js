@@ -1,4 +1,4 @@
-import bot, { keyboard, mainMenu } from './telegram-bot'
+import bot, { keyboard, mainMenu, sendInlineMessage } from './telegram-bot'
 import {
     isValidToken,
     isTokenFreezed,
@@ -28,13 +28,23 @@ export default async message => {
         }
 
         if (!await isTokenFreezed(recievedToken)) {
-            if (!await isYourToken(recievedToken, telegramId)) {
-                return sendMessage(MESSAGES.tokenFreezed)
-            }
+            // if (!await isYourToken(recievedToken, telegramId)) {
+            //     return sendMessage(MESSAGES.tokenFreezed)
+            // }
         }
 
         await freezeTokenWithTelegram(recievedToken, telegramId)
-        sendMessage(MESSAGES.successAuthentication, keyboard(mainMenu))
+        sendMessage(MESSAGES.successAuthentication, {
+            parse_mode: 'markdown',
+            disable_web_page_preview: true,
+            reply_markup: JSON.stringify({
+                inline_keyboard: [[{
+                    text: 'Начать',
+                    callback_data: 'mainMenu'
+                }]],
+                resize_keyboard: true,
+            }),
+        })
     } catch (e) {
         console.log(e)
     }
