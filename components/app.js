@@ -1,6 +1,7 @@
 'use strict'
 
 import bot, { keyboard, mainMenu } from './telegram-bot'
+import request from 'request'
 import twitIt from './twit-it'
 import readMD from './read-markdown'
 // import api from './api'
@@ -106,4 +107,16 @@ bot.onText(/^(Порча бюллетеней)$/, msg => {
     twitIt('Кто-то портит блюллетени', fakeTwitterUsername)
     bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
         keyboard([['Назад']]))
+})
+
+bot.on('photo', async msg => {
+    bot.getFileLink(msg.photo[0].file_id).then(response => {
+        request({
+            method: 'GET',
+            uri: response,
+            encoding: 'base64',
+        }, (error, response, body) => {
+            twitIt('Неизвестное нарушение', fakeTwitterUsername, 168, body)
+        })
+    })
 })

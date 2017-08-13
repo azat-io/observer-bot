@@ -1,6 +1,7 @@
 'use strict'
 
 import Twit from 'twit'
+// import fs from 'fs'
 import { twitterKey } from '../etc/secret.json'
 import { city } from '../etc/config.json'
 
@@ -29,8 +30,13 @@ const twitter = new Twit({
  *                              отправлена в Твиттер
  *
  * @param { number } station  - Номер избирательного участка
+ *
+ * @param { string } photo    - Массив ссылок на фотографии, которые необходимо
+ *                              отправить в Твиттер
  */
-export default function twitIt (message, user, station) {
+export default function twitIt (message, user, station, photos) {
+    station = station || 666
+
     /**
      * Удалить из названия города символы, недопустимые для использования в
      * хештегах Твиттера. Например, слово "Санкт-Петербург" заменить на
@@ -38,20 +44,37 @@ export default function twitIt (message, user, station) {
      */
     const formattedCity = city.replace(/[^а-яё]/gi, '')
 
-    /**
-     * Отправить сообщение в Твиттер, с указанием источника информации в том
-     * случае, если имеется персональный аккаунт в Твиттере, и добавить нужные
-     * хештеги
-     *
-     * Описание метода post:
-     *
-     * @link https://github.com/ttezel/twit#tpostpath-params-callback
-     */
-    return twitter.post('statuses/update', {
-        status: 'УИК 666: ' + message +
-        `${ typeof user !== 'undefined' ? ', сообщает @' + user : '' }` +
-        ` #${ formattedCity }ЗаНавального #Навальный2018 #Выборы2018`,
-    }).catch(error => {
-        console.error(`Ошибка отправки твита: ${ error }`)
-    })
+    function twitterPost (image) {
+        return twitter.post('statuses/update', {
+            status: 'УИК 666: ' + message +
+            `${ typeof user !== 'undefined' ? ', сообщает @' + user : '' }` +
+            ` #${ formattedCity }ЗаНавального #Навальный2018 #Выборы2018`,
+            media_ids: image || null,
+        }).catch(error => {
+            console.error(`Ошибка отправки твита: ${ error }`)
+        })
+    }
+
+    if (photos) {
+        twitter.post('media/upload', {
+            media_data: photos,
+        }, (error, data, response) => {
+            const mediaIdStr = data.media_id_string
+            const params = {
+                media_id: mediaIdStr,
+                alt_text: {
+                    text: message,
+                },
+            }
+
+            return twitter.post('media/metadata/create', params,
+                (error, data, response) => {
+                    if (!error) {
+                        twitterPost([mediaIdStr])
+                    }
+                })
+        })
+    } else {
+        twitterPost()
+    }
 }
