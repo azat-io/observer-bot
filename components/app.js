@@ -1,40 +1,37 @@
 'use strict'
 
-import bot, { keyboard, mainMenu } from './telegram-bot'
+import bot, { keyboard } from './telegram-bot'
 import request from 'request'
 import twitIt from './twit-it'
 import readMD from './read-markdown'
-// import api from './api'
-
-import signup from './signup'
 import deepLinkHandler from './deep-link'
 import getCurrentDataHandler from './get-current-data'
 
 const fakeTwitterUsername = 'fletcherist'
 
 const mainMenuButtons = [
-                [{
-                    text: 'Сообщить о нарушении в день голосования',
-                    callback_data: 'reportOffense',
-                }], [{
-                    text: 'Сообщить о нарушении до дня голосования',
-                    callback_data: 'reportPressure',
-                }], [{
-                    text: 'Начать тестирование знаний',
-                    callback_data: 'knowledgeTest',
-                }], [{
-                    text: 'Узнать результаты в регионе',
-                    callback_data: 'sendResults',
-                }],
-            ]
+    [{
+        text: 'Сообщить о нарушении в день голосования',
+        callback_data: 'reportOffense',
+    }], [{
+        text: 'Сообщить о нарушении до дня голосования',
+        callback_data: 'reportPressure',
+    }], [{
+        text: 'Начать тестирование знаний',
+        callback_data: 'knowledgeTest',
+    }], [{
+        text: 'Узнать результаты в регионе',
+        callback_data: 'sendResults',
+    }],
+]
 
 const anotherRegion = [[{
-                text: 'Другой регион',
-                callback_data: 'sendResults',
-            },{
-                text: 'Главное меню',
-                callback_data: 'mainMenu',
-            }],]
+    text: 'Другой регион',
+    callback_data: 'sendResults',
+}, {
+    text: 'Главное меню',
+    callback_data: 'mainMenu',
+}]]
 
 bot.onText(/^\/start$/, msg => {
     bot.sendMessage(msg.chat.id, 'Выберите действие', {
@@ -85,7 +82,7 @@ const options = [
     }, {
         messageData: 'throwIn',
         messageText: 'Зафиксирован вброс',
-        twit_it:true,
+        twit_it: true,
         inlineKeyboard: [
             [{
                 text: 'Отправить фото-доказательства',
@@ -98,7 +95,7 @@ const options = [
     }, {
         messageData: 'carousel',
         messageText: 'Зафиксирована карусель',
-        twit_it:true,
+        twit_it: true,
         inlineKeyboard: [
             [{
                 text: 'Отправить фото-доказательства',
@@ -181,7 +178,6 @@ const options = [
         inlineKeyboard: anotherRegion,
     }]
 
-
 function sendInlineMessage (data, chatId, dataFromMessage) {
     const messageData = options
 
@@ -192,7 +188,7 @@ function sendInlineMessage (data, chatId, dataFromMessage) {
             messageIndex = i
         }
     }
-    
+
     bot.sendMessage(chatId, messageData[messageIndex].messageText, {
         parse_mode: 'markdown',
         disable_web_page_preview: true,
@@ -201,7 +197,7 @@ function sendInlineMessage (data, chatId, dataFromMessage) {
             resize_keyboard: true,
         }),
     })
-    if(messageData[messageIndex] &&
+    if (messageData[messageIndex] &&
         messageData[messageIndex].twit_it === true) {
         twitIt(messageData[messageIndex].messageData, fakeTwitterUsername)
     }
@@ -220,19 +216,18 @@ bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
 bot.onText(/^(Узнать текущие данные)$/, getCurrentDataHandler)
 
 function twitOffense (type) {
-    if(type === 'throwIn') {
+    if (type === 'throwIn') {
         twitIt('Зафиксирован вброс', fakeTwitterUsername)
         bot.sendMessage(msg.chat.id, readMD('violations/vbros'),
-
-        keyboard([['Назад']]))
-    } else if(type === 'carousel') {
+            keyboard([['Назад']]))
+    } else if (type === 'carousel') {
         twitIt('Обнаружена карусель', fakeTwitterUsername)
         bot.sendMessage(msg.chat.id, 'Текст жалобы на карусель',
-        keyboard([['Назад']]))
-    } else if(type === 'damage') {
+            keyboard([['Назад']]))
+    } else if (type === 'damage') {
         twitIt('Кто-то портит блюллетени', fakeTwitterUsername)
         bot.sendMessage(msg.chat.id, 'Текст жалобы на порчу бюллетеней',
-        keyboard([['Назад']]))
+            keyboard([['Назад']]))
     }
 }
 

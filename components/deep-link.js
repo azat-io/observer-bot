@@ -1,9 +1,8 @@
-import bot, { keyboard, mainMenu, sendInlineMessage } from './telegram-bot'
+import bot from './telegram-bot'
 import {
     isValidToken,
     isTokenFreezed,
     freezeTokenWithTelegram,
-    isYourToken,
 } from './api/tokens'
 
 const MESSAGES = {
@@ -40,7 +39,7 @@ export default async message => {
             reply_markup: JSON.stringify({
                 inline_keyboard: [[{
                     text: 'Начать',
-                    callback_data: 'mainMenu'
+                    callback_data: 'mainMenu',
                 }]],
                 resize_keyboard: true,
             }),

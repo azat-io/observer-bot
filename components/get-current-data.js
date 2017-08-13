@@ -1,9 +1,7 @@
 import bot, { keyboard, mainMenu } from './telegram-bot'
 
-const regions = [['Россия'], ['Мой регион']]
-
 const MESSAGES = {
-    dataIntroduction: 'На текущий момент наблюдатели зафиксировали: '
+    dataIntroduction: 'На текущий момент наблюдатели зафиксировали: ',
 }
 
 const mockData = {
@@ -13,7 +11,7 @@ const mockData = {
     vbros: 42,
     carousel: 12,
     ballotsSpottage: 9,
-    otherCriminalities: 3
+    otherCriminalities: 3,
 }
 
 export default async message => {
@@ -22,13 +20,13 @@ export default async message => {
     sendMessage(MESSAGES.dataIntroduction)
     const composedMessages = [
         MESSAGES.dataIntroduction,
-        `Различие в явке: ${mockData.peopleDifference} человека`,
-        `Зафиксированных нарушений: ${mockData.offensesCount}, из них:`,
+        `Различие в явке: ${ mockData.peopleDifference } человека`,
+        `Зафиксированных нарушений: ${ mockData.offensesCount }, из них:`,
 
-        `       Вбросы: ${mockData.vbros}`,
-        `       Карусели: ${mockData.carousel}`,
-        `       Порча бюллетеней: ${mockData.ballotsSpottage}`,
-        `       Других нарушений: ${mockData.otherCriminalities}`
+        `       Вбросы: ${ mockData.vbros }`,
+        `       Карусели: ${ mockData.carousel }`,
+        `       Порча бюллетеней: ${ mockData.ballotsSpottage }`,
+        `       Других нарушений: ${ mockData.otherCriminalities }`,
     ].filter(Boolean).join('\n')
     sendMessage(composedMessages, keyboard(mainMenu))
 }

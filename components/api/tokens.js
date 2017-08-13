@@ -2,7 +2,7 @@ import generate from 'nanoid/generate'
 import { db } from '../db'
 
 const TELEGRAM_BOT_NAME = 'KazanObserverBot'
-const TELEGRAM_BOT_URL = `https://t.me/${TELEGRAM_BOT_NAME}`
+const TELEGRAM_BOT_URL = `https://t.me/${ TELEGRAM_BOT_NAME }`
 
 // eslint-disable-next-line
 async function generateRandomTokens () {
@@ -12,7 +12,7 @@ async function generateRandomTokens () {
     }
 }
 
-const generateAuthenticationLink = token => `${TELEGRAM_BOT_URL}?start=${token}`
+const generateAuthenticationLink = token => `${ TELEGRAM_BOT_URL }?start=${ token }`
 
 async function generateAuthorizationLinks (count = 10) {
     const authTokens = (await db.ref(`/tokens`).once('value')).val()
