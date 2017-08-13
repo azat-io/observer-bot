@@ -25,8 +25,12 @@ const STEPS = {
 const dataStorage = {}
 
 const getCurrentStep = telegramId => dataStorage[telegramId].step
-const getCurrentQuestion = telegramId => STEPS[getCurrentStep(telegramId)].question
-const getValidateFunction = telegramId => STEPS[getCurrentStep(telegramId)].validateFunction
+const getCurrentQuestion = telegramId => {
+    STEPS[getCurrentStep(telegramId)].question
+}
+const getValidateFunction = telegramId => {
+    STEPS[getCurrentStep(telegramId)].validateFunction
+}
 
 function updateData (telegramId, data) {
     const newUserData = Object.assign(dataStorage[telegramId].data, {
@@ -90,7 +94,7 @@ export default function signup (telegramId, message) {
     }
 
     if (!isValidData(message)) {
-        return sendMessage('Кажется, введены неправильные данные. Попробуй ещё раз')
+        return sendMessage('Кажется, введены неверные данные. Попробуй ещё раз')
     }
 
     updateData(telegramId, message.trim())

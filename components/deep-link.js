@@ -3,15 +3,16 @@ import {
     isValidToken,
     isTokenFreezed,
     freezeTokenWithTelegram,
-    isYourToken
+    isYourToken,
 } from './api/tokens'
 
 const MESSAGES = {
     initializeAuthentication: 'Привет! Подожди секунду, мы тебя авторизуем.',
     successAuthentication: 'Всё, готово! Теперь ты можешь всё.',
-    unsuccessAuthentication: 'К сожалению, нам не удалось авторизовать тебя. Прости. Нам очень жаль :(',
+    unsuccessAuthentication: 'К сожалению, нам не удалось авторизовать тебя. ' +
+        'Прости. Нам очень жаль :(',
     tokenFreezed: `Кажется, вы уже использовали эту ссылку для авторизации.
-        Если это были не вы, срочно напишите нам address@email.com`
+        Если это были не вы, срочно напишите нам address@email.com`,
 }
 
 export default async message => {
@@ -27,7 +28,6 @@ export default async message => {
         }
 
         if (!await isTokenFreezed(recievedToken)) {
-
             if (!await isYourToken(recievedToken, telegramId)) {
                 return sendMessage(MESSAGES.tokenFreezed)
             }
