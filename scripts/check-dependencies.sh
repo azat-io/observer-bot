@@ -29,7 +29,7 @@ dependencies=(
     mongod
 )
 
-check_dependence node 6.0
+check_dependence node 7.0
 for package in ${dependencies[@]}
 do
     check_dependence $package
