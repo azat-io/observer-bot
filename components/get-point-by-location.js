@@ -28,6 +28,10 @@ export default function getPointByLocation (location) {
         language: 'ru',
     })
 
+    if (typeof location === 'string') {
+        location = location.replace(/ *\([^)]*\) */g, '')
+    }
+
     return geocoder.geocode(location)
         .then(response => {
             /**
