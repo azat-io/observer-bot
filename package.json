@@ -7,7 +7,7 @@
   "author": "Azat S. <to@azat.io>",
   "license": "MIT",
   "scripts": {
-    "start": "babel-node \"./components/app.js\"",
+    "start": "babel-watch \"./components/app.js\"",
     "lint": "eslint . --ignore-path .gitignore",
     "lint-staged": "lint-staged",
     "test:watch": "jest --watch",
@@ -33,6 +33,7 @@
     "twit": "^2.2.9"
   },
   "devDependencies": {
+    "babel-watch": "^2.0.7",
     "coveralls": "^2.13.1",
     "eslint": "^4.4.1",
     "eslint-config-standard": "^10.2.1",

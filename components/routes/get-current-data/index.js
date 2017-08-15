@@ -48,5 +48,5 @@ export default () => ([
         messageData: 'nsb',
         messageText: 'Данные по Новосибирской Области: Навальный - 35,8%, Путин - 28,0%, Зюганов - 22,3%, Жириновский - 13,8%.',
         inlineKeyboard: anotherRegion,
-    }
+    },
 ])

@@ -29,5 +29,5 @@ export default () => ([
                 callback_data: 'mainMenu',
             }],
         ],
-    }
+    },
 ])
