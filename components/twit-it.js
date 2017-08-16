@@ -1,7 +1,6 @@
 'use strict'
 
 import Twit from 'twit'
-// import fs from 'fs'
 import { twitterKey } from '../etc/secret.json'
 import { city } from '../etc/config.json'
 
@@ -19,21 +18,6 @@ const twitter = new Twit({
     access_token: twitterKey.accessToken,
     access_token_secret: twitterKey.accessTokenSecret,
 })
-/**
- * Отправить сообщение в Твиттер
- *
- * @param { string } message  - Текст сообщения, которое будет отправленно в
- *                              Твиттер аккаунт
- *
- * @param { string } user     - Необязательный аргумент, юзернейм пользователя,
- *                              являющегося источником информации, которая будет
- *                              отправлена в Твиттер
- *
- * @param { number } station  - Номер избирательного участка
- *
- * @param { string } photo    - Массив ссылок на фотографии, которые необходимо
- *                              отправить в Твиттер
- */
 
 /**
   * Удалить из названия города символы, недопустимые для использования в
@@ -52,11 +36,26 @@ const sendStatusMessage = ({status, media_ids}) => twitter.post('statuses/update
 const createImageMetadata = params => twitter.post('media/metadata/create', params)
 const uploadPhotos = photos => twitter.post('media/upload', {media_data: photos})
 
+/**
+ * Отправить сообщение в Твиттер
+ *
+ * @param { string } message  - Текст сообщения, которое будет отправленно в
+ *                              Твиттер аккаунт
+ *
+ * @param { string } user     - Необязательный аргумент, юзернейм пользователя,
+ *                              являющегося источником информации, которая будет
+ *                              отправлена в Твиттер
+ *
+ * @param { number } station  - Номер избирательного участка
+ *
+ * @param { string } photo    - Линк на фотографию, которую необходимо отправить
+ *                              в Твиттер
+ */
 export default async function twitIt (message, user, station, photos) {
     station = station || 666
 
     const getStatus = () => [
-        'УИК 666:',
+        `УИК ${ station }:`,
         `${ message },`,
         getAuthor(user),
         `#${ formatCity(city) }ЗаНавального #Навальный2018 #Выборы2018`,
@@ -82,7 +81,7 @@ export default async function twitIt (message, user, station, photos) {
         } else {
             await sendStatusMessage({status: getStatus()})
         }
-    } catch (e) {
-        console.error(`Ошибка отправки твита: ${ e }`)
+    } catch (error) {
+        console.error(`Ошибка отправки твита: ${ error }`)
     }
 }
