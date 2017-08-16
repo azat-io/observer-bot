@@ -44,7 +44,7 @@ export default () => ([
             }, {
                 text: 'Отменить',
                 callback_data: 'mainMenu',
-            }]
+            }],
         ],
     }, {
         messageData: 'carousel',
@@ -63,13 +63,7 @@ export default () => ([
         messageData: 'attachPhoto',
         messageText: 'Пожалуйста, прикрепите фотографию нарушения',
         inlineKeyboard: [
-            [{
-                text: 'Отправить',
-                callback_data: 'sendPhoto'
-            }, {
-                text: 'Отменить',
-                callback_data: 'mainMenu'
-            }],
-        ]
-    }
+
+        ],
+    },
 ])

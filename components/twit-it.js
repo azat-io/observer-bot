@@ -1,9 +1,10 @@
 'use strict'
 
 import Twit from 'twit'
-// import fs from 'fs'
 import { twitterKey } from '../etc/secret.json'
 import { city } from '../etc/config.json'
+
+const TWITTER_ACCOUNT_NAME = 'kazan_observer'
 
 /**
  * Создать экземпляр класса Twit для осуществления запросов к API Твиттера
@@ -19,6 +20,26 @@ const twitter = new Twit({
     access_token: twitterKey.accessToken,
     access_token_secret: twitterKey.accessTokenSecret,
 })
+
+/**
+  * Удалить из названия города символы, недопустимые для использования в
+  * хештегах Твиттера. Например, слово "Санкт-Петербург" заменить на
+  * "СанктПетербург"
+  */
+const formatCity = city => city.replace(/[^а-яё]/gi, '')
+const getAuthor = user => user ? `сообщает @${ user }` : ''
+
+const composeMessage = (message, photo) => ({
+    status: message,
+    media_ids: photo || null,
+})
+
+const sendStatusMessage = ({status, media_ids}) => twitter.post('statuses/update', {status, media_ids})
+const createImageMetadata = params => twitter.post('media/metadata/create', params)
+const uploadPhotos = photos => twitter.post('media/upload', {media_data: photos})
+
+const getTwitLink = twitId => `https://twitter.com/${TWITTER_ACCOUNT_NAME}/status/${twitId}`
+
 /**
  * Отправить сообщение в Твиттер
  *
@@ -31,50 +52,49 @@ const twitter = new Twit({
  *
  * @param { number } station  - Номер избирательного участка
  *
- * @param { string } photo    - Массив ссылок на фотографии, которые необходимо
- *                              отправить в Твиттер
+ * @param { string } photo    - Линк на фотографию, которую необходимо отправить
+ *                              в Твиттер
  */
-export default function twitIt (message, user, station, photos) {
+export default async function twitIt (message, user, station, photos) {
     station = station || 666
 
-    /**
-     * Удалить из названия города символы, недопустимые для использования в
-     * хештегах Твиттера. Например, слово "Санкт-Петербург" заменить на
-     * "СанктПетербург"
-     */
-    const formattedCity = city.replace(/[^а-яё]/gi, '')
+    const composeStatus = () => [
+        `УИК ${ station }:`,
+        `${ message },`,
+        getAuthor(user),
+        `#${ formatCity(city) }ЗаНавального #Навальный2018 #Выборы2018`,
+        (Math.floor(Math.random() * 100)).toString(),
+    ].join(' ')
 
-    function twitterPost (image) {
-        return twitter.post('statuses/update', {
-            status: 'УИК 666: ' + message +
-            `${ typeof user !== 'undefined' ? ', сообщает @' + user : '' }` +
-            ` #${ formattedCity }ЗаНавального #Навальный2018 #Выборы2018`,
-            media_ids: image || null,
-        }).catch(error => {
-            console.error(`Ошибка отправки твита: ${ error }`)
+    const composeImage = async () => {
+        if (!photos) return null
+        const { data } = await uploadPhotos(photos)
+
+        await createImageMetadata({
+            media_id: data.media_id_string,
+            alt_text: {
+                text: message,
+            }
         })
+        const response = await sendStatusMessage({
+            status: composeStatus(),
+            media_ids: [data.media_id_string],
+        })
+
+        return data.media_id_string
     }
 
-    if (photos) {
-        twitter.post('media/upload', {
-            media_data: photos,
-        }, (error, data, response) => {
-            const mediaIdStr = data.media_id_string
-            const params = {
-                media_id: mediaIdStr,
-                alt_text: {
-                    text: message,
-                },
-            }
-
-            return twitter.post('media/metadata/create', params,
-                (error, data, response) => {
-                    if (!error) {
-                        twitterPost([mediaIdStr])
-                    }
-                })
+    try {
+        const response = await sendStatusMessage({
+            status: composeStatus(),
+            media_ids: await composeImage()
         })
-    } else {
-        twitterPost()
+
+        const twitId = response.data.id_str
+        return {
+            twitLink: getTwitLink(twitId)
+        }
+    } catch (error) {
+        console.error(`Ошибка отправки твита: ${ error }`)
     }
 }
