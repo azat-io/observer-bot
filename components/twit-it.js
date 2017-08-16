@@ -4,6 +4,8 @@ import Twit from 'twit'
 import { twitterKey } from '../etc/secret.json'
 import { city } from '../etc/config.json'
 
+const TWITTER_ACCOUNT_NAME = 'kazan_observer'
+
 /**
  * Создать экземпляр класса Twit для осуществления запросов к API Твиттера
  *
@@ -36,6 +38,8 @@ const sendStatusMessage = ({status, media_ids}) => twitter.post('statuses/update
 const createImageMetadata = params => twitter.post('media/metadata/create', params)
 const uploadPhotos = photos => twitter.post('media/upload', {media_data: photos})
 
+const getTwitLink = twitId => `https://twitter.com/${TWITTER_ACCOUNT_NAME}/status/${twitId}`
+
 /**
  * Отправить сообщение в Твиттер
  *
@@ -54,7 +58,7 @@ const uploadPhotos = photos => twitter.post('media/upload', {media_data: photos}
 export default async function twitIt (message, user, station, photos) {
     station = station || 666
 
-    const getStatus = () => [
+    const composeStatus = () => [
         `УИК ${ station }:`,
         `${ message },`,
         getAuthor(user),
@@ -62,24 +66,33 @@ export default async function twitIt (message, user, station, photos) {
         (Math.floor(Math.random() * 100)).toString(),
     ].join(' ')
 
-    try {
-        if (photos) {
-            const { data } = await uploadPhotos(photos)
-            console.log(data.media_id_string)
-            const params = {
-                media_id: data.media_id_string,
-                alt_text: {
-                    text: message,
-                },
+    const composeImage = async () => {
+        if (!photos) return null
+        const { data } = await uploadPhotos(photos)
+
+        await createImageMetadata({
+            media_id: data.media_id_string,
+            alt_text: {
+                text: message,
             }
-            await createImageMetadata(params)
-            const response = await sendStatusMessage({
-                status: getStatus(),
-                media_ids: [data.media_id_string],
-            })
-            console.log(response.data)
-        } else {
-            await sendStatusMessage({status: getStatus()})
+        })
+        const response = await sendStatusMessage({
+            status: composeStatus(),
+            media_ids: [data.media_id_string],
+        })
+
+        return data.media_id_string
+    }
+
+    try {
+        const response = await sendStatusMessage({
+            status: composeStatus(),
+            media_ids: await composeImage()
+        })
+
+        const twitId = response.data.id_str
+        return {
+            twitLink: getTwitLink(twitId)
         }
     } catch (error) {
         console.error(`Ошибка отправки твита: ${ error }`)
