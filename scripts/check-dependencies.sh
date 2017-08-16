@@ -26,7 +26,6 @@ function check_dependence {
 
 dependencies=(
     yarn
-    mongod
 )
 
 check_dependence node 7.0
