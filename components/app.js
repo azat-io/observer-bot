@@ -103,7 +103,15 @@ bot.on('photo', async msg => {
         })
 
         const { twitLink } = await twitIt('Зафиксирована карусель', fakeTwitterUsername, 168, body)
-        bot.sendMessage(msg.chat.id, twitLink)
+        const twitText = [
+            'Спасибо за то, что сообщили о нарушении.',
+            `Ссылка на твит:`,
+            twitLink,
+            `Поделитесь ею с друзьями!`
+        ].join('\n')
+        bot.sendMessage(msg.chat.id, twitText, {
+            disable_web_page_preview: true
+        })
     } catch (e) {
         console.log(e)
     }

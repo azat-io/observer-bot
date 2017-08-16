@@ -38,7 +38,7 @@ const sendStatusMessage = ({status, media_ids}) => twitter.post('statuses/update
 const createImageMetadata = params => twitter.post('media/metadata/create', params)
 const uploadPhotos = photos => twitter.post('media/upload', {media_data: photos})
 
-const getTwitLink = twitId => `https://twitter.com/${ TWITTER_ACCOUNT_NAME }/status/${ twitId }`
+const getTwitLink = twitId => `twitter.com/${ TWITTER_ACCOUNT_NAME }/status/${ twitId }`
 
 /**
  * Отправить сообщение в Твиттер
@@ -85,6 +85,7 @@ export default async function twitIt (message, user, station, photos) {
             status: composeStatus(),
             media_ids: await composeImage(),
         })
+        console.log(response)
 
         const twitId = response.data.id_str
         return {
