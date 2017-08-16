@@ -101,7 +101,7 @@ bot.on('photo', async msg => {
             uri: await bot.getFileLink(getFullsizePhoto(msg)),
             encoding: 'base64',
         })
-        
+
         const { twitLink } = await twitIt('Зафиксирована карусель', fakeTwitterUsername, 168, body)
         bot.sendMessage(msg.chat.id, twitLink)
     } catch (e) {
