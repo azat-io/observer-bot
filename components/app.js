@@ -16,8 +16,6 @@ import getCurrentDataRoutes from './routes/get-current-data'
 
 import { candidates } from '../etc/config.json'
 
-const fakeTwitterUsername = 'fletcherist'
-
 const mainMenuButtons = getRoutes()
 
 bot.onText(/^\/start$/, msg => {
@@ -96,7 +94,7 @@ bot.on('photo', async msg => {
         })
 
         const { twitLink } = await twitIt('Зафиксирована карусель',
-            fakeTwitterUsername, 168, body)
+            168, body)
         bot.sendMessage(msg.chat.id, twitLink)
     } catch (e) {
         console.log(e)
@@ -104,11 +102,13 @@ bot.on('photo', async msg => {
 })
 
 let sendResult
-const results = []
-const totalSteps = candidates.length - 1
 let currentStep = 0
 
+const results = []
+
 function sendResults (msg) {
+    const totalSteps = candidates.length - 1
+
     if (currentStep <= totalSteps) {
         sendResult = true
         bot.sendMessage(msg.chat.id,
@@ -119,11 +119,11 @@ function sendResults (msg) {
         )
     } else {
         /*
-         * @todo Интеграфия results с базой данных
+         * @todo Интеграфия массива results с базой данных
          */
         sendResult = false
         bot.sendMessage(msg.chat.id, 'Сообщение о результатах отправлено')
-        twitIt(electionResults(results), 'kimkardashian', 444)
+        twitIt(electionResults(results), 444)
     }
 }
 
@@ -136,7 +136,6 @@ bot.on('message', msg => {
             })
             currentStep += 1
             sendResults(msg)
-            console.log(results)
         } else {
             bot.sendMessage(msg.chat.id, 'Ошибка. Введите данные ещё раз')
         }
