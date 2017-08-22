@@ -1,6 +1,6 @@
 const anotherRegion = [[{
     text: 'Другой регион',
-    callback_data: 'sendResults',
+    callback_data: 'getResults',
 }, {
     text: 'Главное меню',
     callback_data: 'mainMenu',
@@ -8,7 +8,7 @@ const anotherRegion = [[{
 
 export default () => ([
     {
-        messageData: 'sendResults',
+        messageData: 'getResults',
         messageText: 'Выберите регион',
         inlineKeyboard: [
             [{

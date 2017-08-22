@@ -27,7 +27,6 @@ const twitter = new Twit({
   * "СанктПетербург"
   */
 const formatCity = city => city.replace(/[^а-яё]/gi, '')
-const getAuthor = user => user ? `сообщает @${ user }` : ''
 
 const composeMessage = (message, photo) => ({
     status: message,
@@ -46,22 +45,17 @@ const getTwitLink = twitId => `https://twitter.com/${TWITTER_ACCOUNT_NAME}/statu
  * @param { string } message  - Текст сообщения, которое будет отправленно в
  *                              Твиттер аккаунт
  *
- * @param { string } user     - Необязательный аргумент, юзернейм пользователя,
- *                              являющегося источником информации, которая будет
- *                              отправлена в Твиттер
- *
  * @param { number } station  - Номер избирательного участка
  *
  * @param { string } photo    - Линк на фотографию, которую необходимо отправить
  *                              в Твиттер
  */
-export default async function twitIt (message, user, station, photos) {
+export default async function twitIt (message, station, photos) {
     station = station || 666
 
     const composeStatus = () => [
         `УИК ${ station }:`,
-        `${ message },`,
-        getAuthor(user),
+        `${ message }`,
         `#${ formatCity(city) }ЗаНавального #Навальный2018 #Выборы2018`,
         (Math.floor(Math.random() * 100)).toString(),
     ].join(' ')

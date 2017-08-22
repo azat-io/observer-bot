@@ -10,6 +10,9 @@ export default () => ([
         callback_data: 'knowledgeTest',
     }], [{
         text: 'Узнать результаты в регионе',
+        callback_data: 'getResults',
+    }], [{
+        text: 'Отправить результаты',
         callback_data: 'sendResults',
     }],
 ])

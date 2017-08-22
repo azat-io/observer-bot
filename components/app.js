@@ -1,21 +1,22 @@
 'use strict'
 
-import bot, { keyboard } from './telegram-bot'
+import isNumberLike from 'is-number-like'
+
+import bot from './telegram-bot'
 import request from 'request-promise'
 import twitIt from './twit-it'
-import readMD from './read-markdown'
 import deepLinkHandler from './deep-link'
 import getCurrentDataHandler from './get-current-data'
+import electionResults from './election-results'
 
 import getRoutes from './routes'
-
-const fakeTwitterUsername = 'fletcherist'
-
-const mainMenuButtons = getRoutes()
-
 import getReportsRoutes from './routes/reports'
 import getKnowledgeTestRoutes from './routes/knowledge-test'
 import getCurrentDataRoutes from './routes/get-current-data'
+
+import { candidates } from '../etc/config.json'
+
+const mainMenuButtons = getRoutes()
 
 bot.onText(/^\/start$/, msg => {
     bot.sendMessage(msg.chat.id, 'Выберите действие', {
@@ -69,6 +70,11 @@ function sendInlineMessage (data, chatId, dataFromMessage) {
 bot.on('callback_query', callbackQuery => {
     const msg = callbackQuery.message
     const data = callbackQuery.data
+
+    if (data === 'sendResults') {
+        return sendResults(msg)
+    }
+
     bot.answerCallbackQuery(callbackQuery.id)
         .then(() => {
             sendInlineMessage(data, msg.chat.id)
@@ -78,21 +84,6 @@ bot.on('callback_query', callbackQuery => {
 bot.onText(/^\/start [a-zA-Z0-9]{4,32}$/ig, deepLinkHandler)
 bot.onText(/^(Узнать текущие данные)$/, getCurrentDataHandler)
 
-function twitOffense (type) {
-    const sendMessage = bot.sendMessage.bind(null, msg.chat.id)
-    const keyboardPreviousStep = keyboard([['Назад']])
-    if (type === 'throwIn') {
-        twitIt('Зафиксирован вброс', fakeTwitterUsername)
-        sendMessage(readMD('violations/vbros'), keyboardPreviousStep)
-    } else if (type === 'carousel') {
-        twitIt('Обнаружена карусель', fakeTwitterUsername)
-        sendMessage('Текст жалобы на карусель', keyboardPreviousStep)
-    } else if (type === 'damage') {
-        twitIt('Кто-то портит блюллетени', fakeTwitterUsername)
-        sendMessage('Текст жалобы на порчу бюллетеней', keyboardPreviousStep)
-    }
-}
-
 const getFullsizePhoto = msg => msg.photo[msg.photo.length - 1].file_id
 bot.on('photo', async msg => {
     try {
@@ -101,10 +92,54 @@ bot.on('photo', async msg => {
             uri: await bot.getFileLink(getFullsizePhoto(msg)),
             encoding: 'base64',
         })
-        
-        const { twitLink } = await twitIt('Зафиксирована карусель', fakeTwitterUsername, 168, body)
+
+        const { twitLink } = await twitIt('Зафиксирована карусель',
+            168, body)
         bot.sendMessage(msg.chat.id, twitLink)
     } catch (e) {
         console.log(e)
+    }
+})
+
+let sendResult
+let currentStep = 0
+
+const results = []
+
+function sendResults (msg) {
+    const totalSteps = candidates.length - 1
+
+    if (currentStep <= totalSteps) {
+        sendResult = true
+        bot.sendMessage(msg.chat.id,
+            'Введите количество голосов за кандидата ' +
+            `*${ candidates[currentStep] }*`, {
+                parse_mode: 'markdown',
+            }
+        )
+    } else {
+        /*
+         * @todo Интеграфия массива results с базой данных
+         */
+        sendResult = false
+        bot.sendMessage(msg.chat.id, 'Сообщение о результатах отправлено')
+        twitIt(electionResults(results), 444)
+    }
+}
+
+bot.on('message', msg => {
+    if (sendResult) {
+        if (isNumberLike(msg.text)) {
+            results.push({
+                candidate: candidates[currentStep],
+                result: parseInt(msg.text),
+            })
+            currentStep += 1
+            sendResults(msg)
+        } else {
+            bot.sendMessage(msg.chat.id, 'Ошибка. Введите данные ещё раз')
+        }
+    } else {
+        bot.sendMessage(msg.chat.id, 'Не понял')
     }
 })
