@@ -1,4 +1,4 @@
-# Бот Наблюдатель
+# Телеграм ЦИК
 
 [![Build Status](https://travis-ci.org/azat-io/observer-bot.svg?branch=master)](https://travis-ci.org/azat-io/observer-bot)
 [![Coverage Status](https://coveralls.io/repos/github/azat-io/observer-bot/badge.svg?branch=master)](https://coveralls.io/github/azat-io/observer-bot?branch=master)
@@ -8,7 +8,7 @@
 
 <img src="https://user-images.githubusercontent.com/5698350/29092357-bda5b6ce-7c8e-11e7-8a58-4e9525f0654a.png" alt="Бот Наблюдатель" align="right"/>
 
-Исходный код проекта "Бот Наблюдатель"
+Исходный код проекта "Телеграм ЦИК"
 
 Идея проекта заключается в разработке Telegram бота, который будет коммуницировать с наблюдателями на избирательных участках в день выборов. Посредством бота волонтёры будут отправлять информацию о характере нарушений в в ходе голосования, явку избирателей, а также итоги. Одновременно эта информация будет шариться в социальные сети
 
