@@ -9,15 +9,15 @@ import { facebookKey } from '../etc/secret.json'
  * @param { string } message - Текст сообщения, которое будет отправлено на
  *                             страницу в Фейсбуке
  */
-export default function facebookIt (message) {
+export default async function facebookIt (message, callback) {
     FB.setAccessToken(facebookKey)
 
-    FB.api('me/feed', 'post', { message: message }, response => {
+    await FB.api('me/feed', 'post', { message: message }, response => {
         if (!response || response.error) {
             console.log(!response ? 'Ошибка отправки сообщения в FaceBook'
                 : response.error)
         }
 
-        console.log('ID опубликованного сообщения: ' + response.id)
+        callback(response.id)
     })
 }
